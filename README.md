@@ -15,3 +15,5 @@ The current set of filters:
 3. Applying a fisheye effect to the image (varying scale as variable)
 4. Applying grey square effect
 5. Applying grey stripe effect
+-----
+6. Adding opencv
