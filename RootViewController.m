@@ -9,6 +9,7 @@
 #import "RootViewController.h"
 #import "UIImage+ImageEffects.h"
 #import "SimpleFilters.h"
+#import "KmeansFilter.h"
 #import <GPUImage/GPUImage.h>
 
 @interface RootViewController ()
@@ -105,9 +106,12 @@
     //CGFloat bv =blur_value;
     
     if (blur_value<=125){
-        CGFloat value = (arc4random() % 40);
+        //CGFloat value = (arc4random() % 40);
+        CGFloat value = (arc4random() % 15);
         //convertImageToGrayStripes
-        return [image convertImageToGrayStripes:[self takeSnapshotOfView:[self createContentView]]:value*5];
+        NSLog(@"(value+1)*2 %f", (value*2 +1));
+        return [image cannyFilter:[self takeSnapshotOfView:[self createContentView]]];
+        //return [image convertImageToGrayStripes:[self takeSnapshotOfView:[self createContentView]]:value*5];
     }
     
     else if (blur_value<150 && blur_value>125){

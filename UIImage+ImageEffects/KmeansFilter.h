@@ -11,10 +11,14 @@
 
 
 #endif
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 //#import "opencv.hpp"
 
-@interface
-- (cv::Mat)cvMatFromUIImage:(UIImage *)image;
+@interface UIImage (KmeansFilter)
+- (UIImage*)kmeansFilter:(UIImage *)image: (int) clusterCount;
+- (UIImage*)cannyFilter:(UIImage *)image;
+//- (cv::Mat)cvMatFromUIImage:(UIImage *)image;
 
 @end
