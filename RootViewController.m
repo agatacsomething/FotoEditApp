@@ -10,6 +10,8 @@
 #import "UIImage+ImageEffects.h"
 #import "SimpleFilters.h"
 #import "KmeansFilter.h"
+#import "PopColor.h"
+#import "DitherFilters.h"
 #import <GPUImage/GPUImage.h>
 
 @interface RootViewController ()
@@ -105,19 +107,39 @@
    // CGFloat bv = (CGFloat)blur_value;
     //CGFloat bv =blur_value;
     
-    if (blur_value<=125){
+    if (blur_value<=75){
         //CGFloat value = (arc4random() % 40);
         CGFloat value = (arc4random() % 15);
         //convertImageToGrayStripes
         NSLog(@"(value+1)*2 %f", (value*2 +1));
-        return [image cannyFilter:[self takeSnapshotOfView:[self createContentView]]];
+        
+        //return [image popColorMe:[self takeSnapshotOfView:[self createContentView]]];
+       // return [image pixelator:[self takeSnapshotOfView:[self createContentView]]];
+        //return [image popContrast:[self takeSnapshotOfView:[self createContentView]]];
+        
+       // return [image dotify:[self takeSnapshotOfView:[self createContentView]]];
+        //return [image clusteredDots:[self takeSnapshotOfView:[self createContentView]]];
+        //return [image fixedNoisyThreshold:[self takeSnapshotOfView:[self createContentView]]];
+        return [image gratedDots:[self takeSnapshotOfView:[self createContentView]]];
+        
+        
         //return [image convertImageToGrayStripes:[self takeSnapshotOfView:[self createContentView]]:value*5];
+    }
+    
+    else if (blur_value<=125 && blur_value>75){
+        //CGFloat value = (arc4random() % 40);
+        CGFloat value = (arc4random() % 15);
+        //convertImageToGrayStripes
+        NSLog(@"(value+1)*2 %f", (value*2 +1));
+        //return [image cannyFilter:[self takeSnapshotOfView:[self createContentView]]];
+        return [image convertImageToGrayStripes:[self takeSnapshotOfView:[self createContentView]]:value*5];
     }
     
     else if (blur_value<150 && blur_value>125){
         CGFloat value = (arc4random() % 20);
         //
-        return [image convertImageToGraySquares:[self takeSnapshotOfView:[self createContentView]]:value*10];
+        return [image popContrast:[self takeSnapshotOfView:[self createContentView]]];
+        //return [image convertImageToGraySquares:[self takeSnapshotOfView:[self createContentView]]:value*10];
     }
    // elseif ({
      //   return [image convertImageToGrayScale:[self takeSnapshotOfView:[self createContentView]]];
@@ -127,6 +149,8 @@
     }
     
     else if (blur_value>=175 && blur_value<200){
+        CGFloat value = (arc4random() % 15 +1);
+        //return [image kmeansFilter:[self takeSnapshotOfView:[self createContentView]]:value];
         return [image convertImageToFisheye:[self takeSnapshotOfView:[self createContentView]]:.95];
     }
     
@@ -220,7 +244,7 @@
     UIView *contentView = [[UIView alloc] initWithFrame:self.view.frame];
     
     UIImageView *contentImage = [[UIImageView alloc] initWithFrame:contentView.frame];
-    contentImage.image = [UIImage imageNamed:@"demo-bg"];
+    contentImage.image = [UIImage imageNamed:@"ws2"];
     [contentView addSubview:contentImage];
     
 //    UIView *metaViewContainer = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width/2 - 65, 335, 130, 130)];

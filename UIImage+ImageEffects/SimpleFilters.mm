@@ -832,6 +832,116 @@ typedef unsigned char byte;
  
 }
 
+- (UIImage *)pixelator:(UIImage *)image
+{
+
+    int z = (arc4random() % 10) +1;
+    
+    NSLog(@"trying out pixelator ");
+    NSUInteger width = image.size.width; //CGImageGetWidth(imageRef);
+    NSUInteger height = image.size.height; //CGImageGetHeight(imageRef);
+    
+    double w = width;
+    double h = height;
+
+    
+    CGContextRef ctx;
+    CGImageRef imageRef = [image CGImage];
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    
+    Byte *rawData = (Byte *)malloc(height * width * 4);
+    Byte *rawData_copy = (Byte *)malloc(height * width * 4);
+    NSUInteger bytesPerPixel = 4;
+    NSUInteger bytesPerRow = bytesPerPixel * width;
+    NSUInteger bitsPerComponent = 8;
+    CGContextRef context = CGBitmapContextCreate(rawData_copy, width, height,
+                                                 bitsPerComponent, bytesPerRow, colorSpace,
+                                                 kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+    
+    
+    CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
+    CGContextRelease(context);
+    
+    
+    
+    int nw = ceil((double)width/z);
+    int nh = ceil((double)height/z);
+    
+    
+    //    int nw = width/z;
+    //    int nh = height/z;
+    NSLog(@"nh nw %i %i", nw, nh);
+    int max_src = w*h*4;
+    
+    for(int x = 0; x<nh; x++){
+        for(int y =0; y<nw; y++){
+            
+            int red_val = 0;
+            int green_val = 0;
+            int blue_val = 0;
+            
+            for(int i=z*x; i<z*(x+1); i++){
+                for(int j=z*y; j<z*(y+1); j++){
+                    int srcpos = (i*w+j)*4;
+                    
+                    if (srcpos <max_src){
+                        red_val = red_val + rawData_copy[(int)(srcpos )];
+                        green_val = green_val + rawData_copy[(int)(srcpos+1)];
+                        blue_val = blue_val + rawData_copy[(int)(srcpos+2)];
+                    }
+                    
+                }
+            }
+            
+            int low_val = z;
+            int high_val =z;
+            red_val = red_val/(low_val*high_val);
+            green_val = green_val/(low_val*high_val);
+            blue_val = blue_val/(low_val*high_val);
+            
+            //NSLog(@"RGB vals %i, %i, %i ",red_val,green_val,blue_val);
+            
+            for(int i=z*x; i<z*(x+1); i++){
+                for(int j=z*y; j<z*(y+1); j++){
+                    int srcpos = (i*w+j)*4;
+                        
+                    if (srcpos<max_src && i<h && j<w){
+                        rawData[(int)(srcpos )] =  (char) red_val;
+                        rawData[(int)(srcpos +1)] =(char) green_val;
+                        rawData[(int)(srcpos +2)] =(char) blue_val;
+                        rawData[(int)(srcpos +3)] =(char) 255;
+                        }
+                        //byteIndex +=4;
+                    }
+                }
+                //
+            }
+            
+    }
+        
+    
+    
+    ctx = CGBitmapContextCreate(rawData,
+                                CGImageGetWidth( imageRef ),
+                                CGImageGetHeight( imageRef ),
+                                8,
+                                bytesPerRow,
+                                colorSpace,
+                                kCGImageAlphaPremultipliedLast );
+    CGColorSpaceRelease(colorSpace);
+    
+    imageRef = CGBitmapContextCreateImage (ctx);
+    UIImage* rawImage = [UIImage imageWithCGImage:imageRef];
+    //CGImageRelease(imageRef);
+    
+    CGContextRelease(ctx);
+    free(rawData);
+    
+    return rawImage;
+    
+}
+
+
 
 
 @end
