@@ -17,10 +17,13 @@
 - (UIImage *)convertImageToGrayScale:(UIImage *)image;
 - (UIImage *)convertImageToFisheye:(UIImage *)image : (double)z;
 - (UIImage *)imageWithImage:(UIImage *)image scaledToSize:(CGSize)size;
-- (UIImage *)squareCropImageToSideLength: (UIImage *)sourceImage: (CGFloat) sideLength;
+//- (UIImage *)squareCropImageToSideLength: (UIImage *)sourceImage: (CGFloat) sideLength;
 - (UIImage *)flipImage:(UIImage *)image: (int)which_axis;
 - (UIImage *)convertImageToGraySquares:(UIImage *)image: (int)z;
 - (UIImage *)convertImageToGrayStripes:(UIImage *)image: (int)z;
 - (UIImage *)pixelator:(UIImage *)image;
+- (UIImage *)whitebalance:(UIImage *)image;
+
+
 //- (UIImage *)UIImageFromCVMat:(cv::Mat)cvMat;
 @end

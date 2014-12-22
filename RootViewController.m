@@ -12,7 +12,11 @@
 #import "KmeansFilter.h"
 #import "PopColor.h"
 #import "DitherFilters.h"
+#import "BilateralFilters.h"
+#import "MemoryTester.h"
+#import "SimpleFlips.h"
 #import <GPUImage/GPUImage.h>
+#import "Cartoon.h"
 
 @interface RootViewController ()
 
@@ -107,12 +111,21 @@
    // CGFloat bv = (CGFloat)blur_value;
     //CGFloat bv =blur_value;
     
-    if (blur_value<=75){
+    if (blur_value<=125){
         //CGFloat value = (arc4random() % 40);
         CGFloat value = (arc4random() % 15);
         //convertImageToGrayStripes
         NSLog(@"(value+1)*2 %f", (value*2 +1));
         
+        
+       // return [image whitebalance:[self takeSnapshotOfView:[self createContentView]]];
+        //return [image convertToSepia:[self takeSnapshotOfView:[self createContentView]]];
+       // return [image memfilter:[self takeSnapshotOfView:[self createContentView]]];
+        //return [image bfilter:[self takeSnapshotOfView:[self createContentView]]];
+        //cartoonFilter
+        
+        return [image centerFlip:[self takeSnapshotOfView:[self createContentView]]];
+        //return [image cartoonFilter:[self takeSnapshotOfView:[self createContentView]]];
         //return [image popColorMe:[self takeSnapshotOfView:[self createContentView]]];
        // return [image pixelator:[self takeSnapshotOfView:[self createContentView]]];
         //return [image popContrast:[self takeSnapshotOfView:[self createContentView]]];
@@ -120,20 +133,21 @@
        // return [image dotify:[self takeSnapshotOfView:[self createContentView]]];
         //return [image clusteredDots:[self takeSnapshotOfView:[self createContentView]]];
         //return [image fixedNoisyThreshold:[self takeSnapshotOfView:[self createContentView]]];
-        return [image gratedDots:[self takeSnapshotOfView:[self createContentView]]];
-        
+        //clusteredDots
+        //eturn [image gratedDots:[self takeSnapshotOfView:[self createContentView]]];
+       // return [image clusteredDots:[self takeSnapshotOfView:[self createContentView]]];
         
         //return [image convertImageToGrayStripes:[self takeSnapshotOfView:[self createContentView]]:value*5];
     }
     
-    else if (blur_value<=125 && blur_value>75){
-        //CGFloat value = (arc4random() % 40);
-        CGFloat value = (arc4random() % 15);
-        //convertImageToGrayStripes
-        NSLog(@"(value+1)*2 %f", (value*2 +1));
-        //return [image cannyFilter:[self takeSnapshotOfView:[self createContentView]]];
-        return [image convertImageToGrayStripes:[self takeSnapshotOfView:[self createContentView]]:value*5];
-    }
+//    else if (blur_value<=125 && blur_value>75){
+//        //CGFloat value = (arc4random() % 40);
+//        CGFloat value = (arc4random() % 15);
+//        //convertImageToGrayStripes
+//        NSLog(@"(value+1)*2 %f", (value*2 +1));
+//        return [image clusteredDots:[self takeSnapshotOfView:[self createContentView]]];
+//        //return [image convertImageToGrayStripes:[self takeSnapshotOfView:[self createContentView]]:value*5];
+//    }
     
     else if (blur_value<150 && blur_value>125){
         CGFloat value = (arc4random() % 20);
@@ -244,7 +258,7 @@
     UIView *contentView = [[UIView alloc] initWithFrame:self.view.frame];
     
     UIImageView *contentImage = [[UIImageView alloc] initWithFrame:contentView.frame];
-    contentImage.image = [UIImage imageNamed:@"ws2"];
+    contentImage.image = [UIImage imageNamed:@"flowers"];
     [contentView addSubview:contentImage];
     
 //    UIView *metaViewContainer = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width/2 - 65, 335, 130, 130)];

@@ -6,10 +6,13 @@
 //  Copyright (c) 2014 tutsPlus. All rights reserved.
 //
 
-#import "SimpleFilters.h"
+
 #ifdef __cplusplus
 #import "opencv.hpp"
 #endif
+
+#import "SimpleFilters.h"
+#import "MatConverter.h"
 
 @implementation UIImage (SimpleFilters)
 
@@ -313,79 +316,6 @@
     return rawImage;
     
 }
-
-
-//-(NSInteger) generateCBmask: (int)cnum: (int)rnum{
-//
-//    int sqnum = 10;
-//    int sqnumsq = sqnum*sqnum;
-//    NSInteger box_ones  [sqnumsq];
-//    NSInteger box_zeros [sqnumsq];
-//    
-//    for (int i = 0; i < sqnumsq; i++) box_ones[i] = 1;
-//    for (int i = 0; i < sqnumsq; i++) box_zeros[i] = 0;
-//    
-//    
-////id table[cnum][rnum];
-//  //  int *array = (int *)malloc(sizeof(int) * count);
-//    int *a1 = malloc(cnum);
-//    int *a2 = malloc(cnum);
-//    //NSInteger a2[cnum];
-//    NSInteger chk_patt[cnum*rnum];
-//    NSInteger chk_mask[cnum*rnum*sqnumsq];
-//    
-//    for (int j = 0; j<cnum; j++){
-//        NSLog(@"val here %i", j);
-//        a1[j] = (int)pow((double)(-1),(double)j);
-//        NSLog(@"val here %f", a1[j]);
-//        a2[j] = (-1)*a1[j];
-//    }
-//    
-//    NSLog(@"Array 1: %ld", a1[0]);
-//    NSLog(@"Array 2: %ld", a2[0]);
-////table[i][j] = myObj;
-//    
-//    for (int j=0; j<rnum; j++){
-//        if(j%2 ==0)
-//        {
-//            for(int k=0; k<cnum; k++)
-//            {
-//                chk_patt[j*cnum+k]= a1[k];
-//            }
-//        }
-//        else
-//        {
-//            for(int k=0; k<cnum; k++)
-//            {
-//                chk_patt[j*cnum+k]= a2[k];
-//            }
-//        }
-//            
-//        
-//    }
-//    
-//    for(int i = 0; i< rnum*cnum; i++){
-//        if(chk_patt[i] == 1)
-//           {
-//               for (int j=0; j<sqnumsq; j++){
-//                   chk_mask[i*sqnumsq+j]=box_ones[j];
-//               }
-//               
-//           }
-//        else
-//           {
-//               for (int j=0; j<sqnumsq; j++){
-//                   chk_mask[i*sqnumsq+j]=box_zeros[j];
-//               }
-//           }
-//    }
-//    
-//    NSLog(@"Array 3: %ld %ld %ld", chk_patt[0], chk_patt[cnum-1], chk_patt[cnum]);
-//  //  table[1][1] = 1;
-//    
-//    return chk_mask;
-//}
-
 
 
 - (UIImage *)convertImageToFisheye:(UIImage *)image : (double)z;
@@ -936,6 +866,150 @@ typedef unsigned char byte;
     
     CGContextRelease(ctx);
     free(rawData);
+    
+    return rawImage;
+    
+}
+
+
+- (UIImage *)convertToSepia:(UIImage *)image
+{
+
+    NSLog(@"trying out convertToSepia ");
+    NSUInteger w = image.size.width; //CGImageGetWidth(imageRef);
+    NSUInteger h = image.size.height; //CGImageGetHeight(imageRef);
+
+    MatConverter* mc = [[MatConverter alloc] init];
+    
+    cv::Mat img_cvmat = [mc cvMatFromUIImage:image];
+    cv::Mat new_image = cv::Mat::zeros( h,w, CV_8UC4 );
+    
+    for( int y = 0; y < new_image.rows; y++ ){
+        for( int x = 0; x < new_image.cols; x++ ){
+            //for( int c = 0; c < 3; c++ ){
+                int grey_val = (img_cvmat.at<cv::Vec4b>(y,x)[0] + img_cvmat.at<cv::Vec4b>(y,x)[1] + img_cvmat.at<cv::Vec4b>(y,x)[2])/3;
+            
+            double iR =img_cvmat.at<cv::Vec4b>(y, x)[0];
+            double iG =img_cvmat.at<cv::Vec4b>(y, x)[1];
+            double iB =img_cvmat.at<cv::Vec4b>(y, x)[2];
+            
+            int outputRed =  MIN(iR * .393 + iG *.769 + iB* .189,255);
+            int outputGreen= MIN(iR * .349 + iG *.686 + iB* .168,255);
+            int outputBlue = MIN(iR * .272 + iG *.534 + iB* .131,255);
+            
+            new_image.at<cv::Vec4b>(y,x)[0] = outputRed;
+            new_image.at<cv::Vec4b>(y,x)[1] = outputGreen;
+            new_image.at<cv::Vec4b>(y,x)[2] = outputBlue;
+            new_image.at<cv::Vec4b>(y,x)[3] = 255 ;
+        }
+    }
+    std::cout << new_image.at<cv::Vec4b>(0,0)[0] << " : " << new_image.at<cv::Vec4b>(0,0)[3] << std::endl;
+    
+    UIImage *rawImage = [mc UIImageFromCVMat:new_image];
+    
+    
+    return rawImage;
+
+}
+
+- (UIImage *)whitebalance:(UIImage *)image
+{
+    
+    NSLog(@"trying out convertToBlueTone ");
+    NSUInteger w = image.size.width; //CGImageGetWidth(imageRef);
+    NSUInteger h = image.size.height; //CGImageGetHeight(imageRef);
+    
+    MatConverter* mc = [[MatConverter alloc] init];
+    
+    cv::Mat img_cvmat = [mc cvMatFromUIImage:image];
+    cv::Mat new_image = cv::Mat::zeros( h,w, CV_8UC4 );
+    
+    double sum_r= 0;
+    double sum_g= 0;
+    double sum_b= 0;
+    
+    for( int y = 0; y < new_image.rows; y++ ){
+        for( int x = 0; x < new_image.cols; x++ ){
+            sum_r =sum_r + img_cvmat.at<cv::Vec4b>(y, x)[0];
+            sum_g =sum_g + img_cvmat.at<cv::Vec4b>(y, x)[1];
+            sum_b =sum_b + img_cvmat.at<cv::Vec4b>(y, x)[2];
+            
+        }
+    }
+
+    
+    double mean_r= sum_r/(w*h);
+    double mean_g= sum_g/(w*h);
+    double mean_b= sum_b/(w*h);
+    double mean_grey= (mean_r+mean_g+mean_b)/3.0;
+    
+    double scale_r= MAX(mean_grey,128)/mean_r;
+    double scale_g= MAX(mean_grey,128)/mean_g;
+    double scale_b= MAX(mean_grey,128)/mean_b;
+    
+    for( int y = 0; y < new_image.rows; y++ ){
+        for( int x = 0; x < new_image.cols; x++ ){
+            //for( int c = 0; c < 3; c++ ){
+
+//            int grey_val = (img_cvmat.at<cv::Vec4b>(y,x)[0] + img_cvmat.at<cv::Vec4b>(y,x)[1] + img_cvmat.at<cv::Vec4b>(y,x)[2])/3;
+            
+            double iR =img_cvmat.at<cv::Vec4b>(y, x)[0];
+            double iG =img_cvmat.at<cv::Vec4b>(y, x)[1];
+            double iB =img_cvmat.at<cv::Vec4b>(y, x)[2];
+            
+            int randomNum = rand() % 20 + (-10);
+            
+//            int outputRed =  MIN(abs(iR +randomNum)*0.8 ,255);
+//            int outputGreen= MIN(iG*0.8,255);
+//            int outputBlue = MIN(iB,255);
+//            int outputRed =  MIN(iG * .393 + iB *.769 + iR* .189,255);
+//            int outputGreen= MIN(iG * .349 + iB *.686 + iR* .168,255);
+//            int outputBlue = MIN(iG * .272 + iB *.534 + iR* .131,255);
+            
+            // First, calculate the current lightness.
+            double oldL = iR * 0.30 + iG * 0.59 + iB * 0.11;
+            
+            // Adjust the color components. This changes lightness.
+            //iR = MAX(iR - 30, 0);
+            
+            // Now correct the color back to the old lightness.
+//            float newL = iR * 0.30 + iG * 0.59 + iB * 0.11;
+//            int outputRed;
+//            int outputGreen;
+//            int outputBlue;
+//            
+//            if (newL > 0) {
+//                outputRed = iR * oldL / newL;
+//                outputGreen = iG * oldL / newL;
+//                outputBlue = iB * oldL / newL;
+//            }
+//            else{
+//                outputRed = iR;
+//                outputGreen = iG;
+//                outputBlue = iB;
+//            }
+            
+            double t = 0.5;
+            //MIN(255,MAX(0,color))
+//            int outputRed =   MIN(255, MAX((grey_val + t * (iR - grey_val)),0));
+//            int outputGreen = MIN(255, MAX((grey_val + t * (iG - grey_val)),0));
+//            int outputBlue =  MIN(255, MAX((grey_val + t * (iB - grey_val)),0));
+
+            
+            int outputRed =  MIN(iR*scale_r ,255);
+            int outputGreen= MIN(iG*scale_g ,255);
+            int outputBlue = MIN(iB*scale_b ,255);
+            
+            new_image.at<cv::Vec4b>(y,x)[0] = outputRed;
+            new_image.at<cv::Vec4b>(y,x)[1] = outputGreen;
+            new_image.at<cv::Vec4b>(y,x)[2] = outputBlue;
+            new_image.at<cv::Vec4b>(y,x)[3] = 255 ;
+        }
+    }
+   // std::cout << new_image.at<cv::Vec4b>(0,0)[0] << " : " << new_image.at<cv::Vec4b>(0,0)[3] << std::endl;
+    
+    UIImage *rawImage = [mc UIImageFromCVMat:new_image];
+    
     
     return rawImage;
     

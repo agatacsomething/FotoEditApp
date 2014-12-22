@@ -74,7 +74,7 @@
     for(int ii = 0 ; ii <  height ; ++ii)
     {
         for(int jj = 0 ; jj < width  ; ++jj){
-            rawData[byteIndex] = (char)detected_edges.at<uchar>(ii,jj);
+            rawData[byteIndex] =   (char)detected_edges.at<uchar>(ii,jj);
             rawData[byteIndex+1] = (char)detected_edges.at<uchar>(ii,jj);
             rawData[byteIndex+2] = (char)detected_edges.at<uchar>(ii,jj);
             rawData[byteIndex+3] = 255;

@@ -149,12 +149,32 @@
 
 - (UIImage*)clusteredDots:(UIImage *)image{
     
-    NSLog(@"trying out clusteredDots");
+   
     
     int box=6;
     
-    int S[36] = {34, 29, 17, 21, 30, 35, 28, 14, 9, 16, 20, 31, 13, 8, 4, 5, 15, 19, 12, 3, 0, 1, 10, 18, 27, 7, 2, 6, 23, 24, 33, 26, 11, 22, 25, 32};
+    int which_color = (arc4random() % 4);
+    int which_S = (arc4random() % 3);
     
+     NSLog(@"trying out clusteredDots %i", which_color);
+    
+   // NSMutableArray* S = [[NSMutableArray alloc] init];
+    
+    //clustered dots
+//    int S[36] = {34, 29, 17, 21, 30, 35, 28, 14, 9, 16, 20, 31, 13, 8, 4, 5, 15, 19, 12, 3, 0, 1, 10, 18, 27, 7, 2, 6, 23, 24, 33, 26, 11, 22, 25, 32};
+    
+    //central white point
+//    int S[36] = {34, 25, 21, 17, 29, 33, 30, 13, 9, 5, 12, 24, 18, 6, 1, 0, 8, 20, 22, 10, 2, 3, 4, 16, 26, 14, 7, 11, 15, 28, 35, 31, 19, 23, 27, 32};
+    
+    //balanced center point
+     int S[36] = {30, 22, 16, 21, 33, 35, 24, 11, 7, 9, 26, 28, 13, 5, 0, 2, 14, 19, 15, 3, 1, 4, 12, 18, 27, 8, 6, 10, 25, 29, 32, 20, 17, 23, 31, 34};
+    
+//    if (which_S==0){
+//        S
+//    }
+//    else if (which_S==1){
+//        S = {34, 29, 17, 21, 30, 35, 28, 14, 9, 16, 20, 31, 13, 8, 4, 5, 15, 19, 12, 3, 0, 1, 10, 18, 27, 7, 2, 6, 23, 24, 33, 26, 11, 22, 25, 32};
+//    }
     
     double d = 255/(box*box);
     
@@ -203,29 +223,65 @@
             
             //if(x%box ==0 && y%box==0){
                 
-                ii =0;
-                jj =0;
+//                ii =0;
+//                jj =0;
                 // int srcpos = i*j*4;
+            sqpos=0;
                 for(int i=box*x; i<box*(x+1); i++){
                     
                     for(int j=box*y; j<box*(y+1); j++){
                         srcpos = (i*w+j)*4;
-                        sqpos = ii*box+jj;
+                        //sqpos = ii*box+jj;
                         
                         if (srcpos<max_src && i<h && j<w){
+                            int grey_val = (rawData_copy[(int)(srcpos )] + rawData_copy[(int)(srcpos +1 )] + rawData_copy[(int)(srcpos +2)])/3;
                             
-                            double nr = rawData_copy[(int)(srcpos )]/d;
-                            double ng = rawData_copy[(int)(srcpos+1 )]/d;
-                            double nb = rawData_copy[(int)(srcpos+2 )]/d;
+                            grey_val=grey_val/d;
                             
-                            int grey_val = (nr+ng+nb)/3;
-                            int grey_val_orig = grey_val*3*d;
+                            //int grey_val = (nr+ng+nb)/3;
                             
-                            if (grey_val< S[sqpos]){
-                                rawData[(int)(srcpos )] =  (char) grey_val_orig;
-                                rawData[(int)(srcpos +1)] =(char) grey_val_orig;
-                                rawData[(int)(srcpos +2)] =(char) grey_val_orig;
-                                rawData[(int)(srcpos +3)] =(char) 255;
+//                            double nr = rawData_copy[(int)(srcpos )];
+//                            double ng = rawData_copy[(int)(srcpos+1 )];
+//                            double nb = rawData_copy[(int)(srcpos+2 )];
+                            
+                            
+                           // int grey_val_orig = grey_val*3*d;
+                            
+                            if (grey_val> S[sqpos]){
+                                if (which_color==0){
+                                    rawData[(int)(srcpos )] =  (char) rawData_copy[(int)(srcpos )];
+                                    rawData[(int)(srcpos )] =  (char) rawData_copy[(int)(srcpos+1 )];
+                                    rawData[(int)(srcpos +2)] =  (char) rawData_copy[(int)(srcpos+2 )];
+                                    rawData[(int)(srcpos )] =  (char) 255;
+                                }
+                                else if (which_color==1){
+                                    rawData[(int)(srcpos )] =  (char) rawData_copy[(int)(srcpos )];
+                                    rawData[(int)(srcpos )] =  (char) rawData_copy[(int)(srcpos+1 )];
+                                    rawData[(int)(srcpos )] =  (char) rawData_copy[(int)(srcpos+2 )];
+                                    rawData[(int)(srcpos )] =  (char) 255;
+                                }
+                                
+                                else if (which_color==2){
+                                    rawData[(int)(srcpos )] =  (char) rawData_copy[(int)(srcpos )];
+                                    rawData[(int)(srcpos+1 )] =  (char) rawData_copy[(int)(srcpos+1 )];
+                                    rawData[(int)(srcpos )] =  (char) rawData_copy[(int)(srcpos+2 )];
+                                    rawData[(int)(srcpos+3 )] =  (char) 255;
+                                }
+                                
+                                else if (which_color==3){
+                                    rawData[(int)(srcpos )] =  (char) 255;
+                                    rawData[(int)(srcpos+1 )] =  (char) 255;
+                                    rawData[(int)(srcpos+2 )] =  (char) 255;
+                                    rawData[(int)(srcpos+3 )] =  (char) 255;
+                                }
+                                
+                                else {
+                                    rawData[(int)(srcpos )] =  (char) rawData_copy[(int)(srcpos )];
+                                    rawData[(int)(srcpos )] =  (char) rawData_copy[(int)(srcpos+1 )];
+                                    rawData[(int)(srcpos )] =  (char) rawData_copy[(int)(srcpos+2 )];
+                                    rawData[(int)(srcpos +3)] =  (char) 255;
+                                }
+                                
                             }
                             
                             else{
@@ -236,9 +292,9 @@
                             }
                             
                         }
-                        jj +=1;
+                        sqpos +=1;
                     }
-                    ii +=1;
+                   // ii +=1;
                 }
                 //
             //}
