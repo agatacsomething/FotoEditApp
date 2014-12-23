@@ -112,14 +112,17 @@
     int num_tiles_x = 2;
     int num_tiles_y = 2;
     int total_tiles = num_tiles_x*num_tiles_y;
-    int border = (num_tiles_x+1)*3;
+    int border = 5;
     int total_black = border*2;
-    int buffer =total_black/(num_tiles_x+1);
+    //int buffer =total_black/(num_tiles_x+1);
+    
     
     cv::Mat img_small;
     cv::Size size_small;
     size_small.width = w/num_tiles_x-border;
     size_small.height = h/num_tiles_y-border;
+    
+    int buffer =(w-size_small.width*num_tiles_x)/(num_tiles_x+1);
     
     cv::resize(img_orig, img_small, size_small, 0, 0, cv::INTER_LINEAR);
     
@@ -130,17 +133,39 @@
     int cw =size_small.width;
     int ch =size_small.height;
     
-    for(int i =0 ; i<num_tiles_x; i++){
-        for(int j =0 ; j<num_tiles_y; j++){
-            img_small.copyTo(cv::Mat(img_new, cv::Rect(i*(cw+(2*buffer-1))+buffer, j*(ch+(2*buffer-1))+buffer, cw, ch)));
-        }
-    }
+    //void flip(const Mat& src, Mat& dst, int flipCode)
+    
+   // void flip(const Mat& src, Mat& dst, int flipCode)
+
+    img_small.copyTo(cv::Mat(img_new, cv::Rect(buffer, buffer, cw, ch)));
+    cv::Mat y_flip;
+    cv::flip(img_small, y_flip, 1);
+    y_flip.copyTo(cv::Mat(img_new, cv::Rect(cw+2*buffer, buffer, cw, ch)));
+    cv::Mat x_flip;
+    cv::flip(img_small, x_flip, 0);
+    x_flip.copyTo(cv::Mat(img_new, cv::Rect(buffer, ch+2*buffer, cw, ch)));
+    cv::Mat xy_flip;
+    cv::flip(img_small, xy_flip, -1);
+    xy_flip.copyTo(cv::Mat(img_new, cv::Rect(cw+2*buffer, ch+2*buffer, cw, ch)));
+
+
+//    img_small.copyTo(cv::Mat(img_new, cv::Rect(i*(cw+(buffer))+buffer, j*(ch+(buffer))+buffer, cw, ch)));
+
+    //img_small.copyTo(cv::Mat(cv::flip(img_new, img_new, 1), cv::Rect(buffer, ch+2*buffer, cw, ch));
+
+
+    
+//    for(int i =0 ; i<num_tiles_x; i++){
+//        for(int j =0 ; j<num_tiles_y; j++){
+//        }
+//    }
     
     UIImage* outImage = [mc UIImageFromCVMat: img_new];
     
     return outImage;
     
 }
+
 
 
 @end
