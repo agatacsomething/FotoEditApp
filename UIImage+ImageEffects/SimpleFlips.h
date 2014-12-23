@@ -22,6 +22,7 @@
 
 - (UIImage*)centerFlip:(UIImage *)image;
 - (UIImage*)tilingFilter:(UIImage *)image;
+- (UIImage*)tilingFilterWflips:(UIImage *)image;
 
 
 @end

@@ -124,7 +124,8 @@
         //return [image bfilter:[self takeSnapshotOfView:[self createContentView]]];
         //cartoonFilter
         
-        return [image centerFlip:[self takeSnapshotOfView:[self createContentView]]];
+        return [image tilingFilter:[self takeSnapshotOfView:[self createContentView]]];
+        //return [image centerFlip:[self takeSnapshotOfView:[self createContentView]]];
         //return [image cartoonFilter:[self takeSnapshotOfView:[self createContentView]]];
         //return [image popColorMe:[self takeSnapshotOfView:[self createContentView]]];
        // return [image pixelator:[self takeSnapshotOfView:[self createContentView]]];
@@ -258,7 +259,7 @@
     UIView *contentView = [[UIView alloc] initWithFrame:self.view.frame];
     
     UIImageView *contentImage = [[UIImageView alloc] initWithFrame:contentView.frame];
-    contentImage.image = [UIImage imageNamed:@"flowers"];
+    contentImage.image = [UIImage imageNamed:@"hugh"];
     [contentView addSubview:contentImage];
     
 //    UIView *metaViewContainer = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width/2 - 65, 335, 130, 130)];

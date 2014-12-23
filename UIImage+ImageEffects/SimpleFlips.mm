@@ -55,35 +55,41 @@
 
 - (UIImage*)tilingFilter:(UIImage *)image{
     
-    NSLog(@"trying out centerFlip");
-    
-    
-    //resize(src, dst, dst.size(), 0, 0, interpolation);
-    
-    int w = image.size.width; //CGImageGetWidth(imageRef);
-    int h = image.size.height; //CGImageGetHeight(imageRef);
-    int center_x = w/2;
-    int halfwidth= 20;
-    int low_bound =center_x-halfwidth;
-    int upper_bound =center_x+halfwidth;
+    NSLog(@"trying out tilingFilter");
     
     MatConverter* mc = [[MatConverter alloc] init];
     cv::Mat img_orig = [mc cvMatFromUIImage:image];
     
-    cv::Mat img_new(img_orig.rows,img_orig.cols,CV_8UC3);
+    int w = image.size.width; //CGImageGetWidth(imageRef);
+    int h = image.size.height; //CGImageGetHeight(imageRef);
     
-    std::cout << img_orig.type() << std::endl;
+    int num_tiles_x = 2;
+    int num_tiles_y = 3;
+    int total_tiles = num_tiles_x*num_tiles_y;
+    int border = 5;
+    int total_black = border*2;
+    //int buffer =total_black/(num_tiles_x+1);
     
-    for(int i = 0; i<img_orig.rows; i++){
-        for(int j = 0; j<img_orig.cols; j++){
-            for (int k = 0 ; k<3; k++){
-                if (j<low_bound || j>upper_bound){
-                    img_new.at<cv::Vec3b>(i,j)[k] = img_orig.at<cv::Vec4b>(i,j)[k];
-                }
-                else{
-                    img_new.at<cv::Vec3b>(i,j)[k] = img_orig.at<cv::Vec4b>(h-i,j)[k];
-                }
-            }
+
+    cv::Mat img_small;
+    cv::Size size_small;
+    size_small.width = w/num_tiles_x-border;
+    size_small.height = h/num_tiles_y-border;
+    
+    int buffer =(w-size_small.width*num_tiles_x)/(num_tiles_x+1);
+    
+    cv::resize(img_orig, img_small, size_small, 0, 0, cv::INTER_LINEAR);
+    
+    cv::Mat img_new(img_orig.rows,img_orig.cols,CV_8UC4);
+    
+    std::cout << img_new.type() << img_small.type() << std::endl;
+    
+    int cw =size_small.width;
+    int ch =size_small.height;
+    
+    for(int i =0 ; i<num_tiles_x; i++){
+        for(int j =0 ; j<num_tiles_y; j++){
+            img_small.copyTo(cv::Mat(img_new, cv::Rect(i*(cw+(buffer))+buffer, j*(ch+(buffer))+buffer, cw, ch)));
         }
     }
     
@@ -93,6 +99,48 @@
     
 }
 
+- (UIImage*)tilingFilterWflips:(UIImage *)image{
+    
+    NSLog(@"trying out tilingFilterWflips");
+    
+    MatConverter* mc = [[MatConverter alloc] init];
+    cv::Mat img_orig = [mc cvMatFromUIImage:image];
+    
+    int w = image.size.width; //CGImageGetWidth(imageRef);
+    int h = image.size.height; //CGImageGetHeight(imageRef);
+    
+    int num_tiles_x = 2;
+    int num_tiles_y = 2;
+    int total_tiles = num_tiles_x*num_tiles_y;
+    int border = (num_tiles_x+1)*3;
+    int total_black = border*2;
+    int buffer =total_black/(num_tiles_x+1);
+    
+    cv::Mat img_small;
+    cv::Size size_small;
+    size_small.width = w/num_tiles_x-border;
+    size_small.height = h/num_tiles_y-border;
+    
+    cv::resize(img_orig, img_small, size_small, 0, 0, cv::INTER_LINEAR);
+    
+    cv::Mat img_new(img_orig.rows,img_orig.cols,CV_8UC4);
+    
+    std::cout << img_new.type() << img_small.type() << std::endl;
+    
+    int cw =size_small.width;
+    int ch =size_small.height;
+    
+    for(int i =0 ; i<num_tiles_x; i++){
+        for(int j =0 ; j<num_tiles_y; j++){
+            img_small.copyTo(cv::Mat(img_new, cv::Rect(i*(cw+(2*buffer-1))+buffer, j*(ch+(2*buffer-1))+buffer, cw, ch)));
+        }
+    }
+    
+    UIImage* outImage = [mc UIImageFromCVMat: img_new];
+    
+    return outImage;
+    
+}
 
 
 @end
