@@ -14,6 +14,7 @@ NS_ROOT_CLASS
 
 @interface ColorConverter
 
+- (UIImage *)convertToSepia:(UIImage *)image;
 - (double*)rgb2lab:(double *)rgbvals;
 
 @end

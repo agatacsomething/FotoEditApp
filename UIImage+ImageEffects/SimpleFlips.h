@@ -20,9 +20,13 @@
 
 @interface UIImage (SimpleFlips)
 
+//uiimage version
 - (UIImage*)centerFlip:(UIImage *)image;
 - (UIImage*)tilingFilter:(UIImage *)image;
 - (UIImage*)tilingFilterWflips:(UIImage *)image;
 
+
+//opencv mats
+//- (cv::Mat)tilingFilter_ocv:(cv::Mat)img_orig;
 
 @end

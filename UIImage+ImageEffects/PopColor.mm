@@ -5,7 +5,14 @@
 //  Created by Agata on 12/13/14.
 //  Copyright (c) 2014 tutsPlus. All rights reserved.
 //
+
 #include "PopColor.h"
+#ifdef __cplusplus
+#import "opencv.hpp"
+#endif
+
+#import "MatConverter.h"
+
 #include "KmeansFilter.h"
 
 
@@ -615,6 +622,116 @@
     return rawImage;
     
 }
+
+- (UIImage*)popColorSwitch_img:(UIImage *)image{
+    
+    std::cout << "trying out popcolorswitch" <<std::endl;
+    
+    MatConverter* mc = [[MatConverter alloc] init];
+    cv::Mat img_orig = [mc cvMatFromUIImage:image];
+    
+    
+    int width = image.size.width; //CGImageGetWidth(imageRef);
+    int height = image.size.height; //CGImageGetHeight(imageRef);
+    
+    int w = width;
+    int h = height;
+
+    
+    
+    //    int nw = width/z;
+    //    int nh = height/z;
+   // NSLog(@"nh nw %i %i", nw, nh);
+    int max_src = w*h*4;
+    int srcpos;
+    int sqpos=0;
+    int ii;
+    int jj;
+    
+    cv::Mat img_new ( h,w, img_orig.type());
+    
+    //std::cout << img_new.size() << " : " << img_orig.size() << std::endl;
+    
+    for(int x = 0; x<h; x++){
+        for(int y =0; y<w; y++){
+            
+            srcpos = (x*w + y)*4;
+        
+//            img_new.data[srcpos  ] =  img_orig.data[srcpos ];
+//            img_new.data[srcpos+1] =  img_orig.data[srcpos+1 ];
+//            img_new.data[srcpos  ] =  img_orig.data[srcpos+2 ];
+//            img_new.data[srcpos+3] =255;
+            
+            //reds and yellows
+//            img_new.data[srcpos  +1] =  img_orig.data[srcpos ];
+//            img_new.data[srcpos  ] =  img_orig.data[srcpos+1 ];
+//            img_new.data[srcpos  ] =  img_orig.data[srcpos+2 ];
+//            img_new.data[srcpos  ] =255;
+            
+            //green, yellow, red
+//            img_new.data[srcpos  ] =  img_orig.data[srcpos ];
+//            img_new.data[srcpos  ] =  img_orig.data[srcpos+1 ];
+//            img_new.data[srcpos  +1] =  img_orig.data[srcpos+2 ];
+//            img_new.data[srcpos  +3] =255;
+            
+            //reds and blues
+//            img_new.data[srcpos  ] =  img_orig.data[srcpos ];
+//            img_new.data[srcpos  ] =  img_orig.data[srcpos+1 ];
+//            img_new.data[srcpos  +2] =  img_orig.data[srcpos+2 ];
+//            img_new.data[srcpos  +3] =255;
+            
+            //blues and purples
+//            img_new.data[srcpos  +2] =  img_orig.data[srcpos ];
+//            img_new.data[srcpos  +1] =  img_orig.data[srcpos+1 ];
+//            img_new.data[srcpos  ] =  img_orig.data[srcpos+2 ];
+//            img_new.data[srcpos  +3] =255;
+            
+            //white, blues, purples
+//            img_new.data[srcpos  +2] =  img_orig.data[srcpos ];
+//            img_new.data[srcpos  ] =  img_orig.data[srcpos+1 ];
+//            img_new.data[srcpos  +1] =  img_orig.data[srcpos+2 ];
+//            img_new.data[srcpos  +3] =255;
+            
+            //reds and whites
+//            img_new.data[srcpos  ] =  img_orig.data[srcpos ];
+//            img_new.data[srcpos  +1 ] =  img_orig.data[srcpos+1 ];
+//            img_new.data[srcpos  +1] =  img_orig.data[srcpos+2 ];
+//            img_new.data[srcpos  +3] =255;
+            
+            //white, blues/gree, red
+//            img_new.data[srcpos  +1] =  img_orig.data[srcpos ];
+//            img_new.data[srcpos   ] =  img_orig.data[srcpos+1 ];
+//            img_new.data[srcpos  +1] =  img_orig.data[srcpos+2 ];
+//            img_new.data[srcpos  +3] =255;
+            
+            //old photo-ish
+//            img_new.data[srcpos  ] =  128;
+//            img_new.data[srcpos  +1 ] =  img_orig.data[srcpos+1 ];
+//            img_new.data[srcpos  +2] =  img_orig.data[srcpos+2 ];
+//            img_new.data[srcpos  +3] =255;
+            
+            int r =img_orig.data[srcpos];
+            int b =img_orig.data[srcpos+2];
+            
+            
+            img_new.data[srcpos  ] = std::min(r, b);
+            img_new.data[srcpos  +1 ] =  img_orig.data[srcpos+1 ];//-img_orig.data[srcpos+1];
+            img_new.data[srcpos  +2] =  img_orig.data[srcpos+2 ];
+            img_new.data[srcpos  +3] =255;
+            
+        }
+        
+       // sqpos +=4;
+    }
+    
+    
+    UIImage* outImage = [mc UIImageFromCVMat: img_new];
+    
+    return outImage;
+    
+}
+
+
 
 
 @end

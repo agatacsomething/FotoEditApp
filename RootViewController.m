@@ -15,6 +15,7 @@
 #import "BilateralFilters.h"
 #import "MemoryTester.h"
 #import "SimpleFlips.h"
+#import "TwoComboFilters.h"
 #import <GPUImage/GPUImage.h>
 #import "Cartoon.h"
 
@@ -118,13 +119,14 @@
         NSLog(@"(value+1)*2 %f", (value*2 +1));
         
         
+        return [image tilingFilterWcolorswap:[self takeSnapshotOfView:[self createContentView]]];
        // return [image whitebalance:[self takeSnapshotOfView:[self createContentView]]];
         //return [image convertToSepia:[self takeSnapshotOfView:[self createContentView]]];
        // return [image memfilter:[self takeSnapshotOfView:[self createContentView]]];
         //return [image bfilter:[self takeSnapshotOfView:[self createContentView]]];
         //cartoonFilter
         
-        return [image tilingFilterWflips:[self takeSnapshotOfView:[self createContentView]]];
+        //return [image tilingFilterWflips:[self takeSnapshotOfView:[self createContentView]]];
         //return [image tilingFilter:[self takeSnapshotOfView:[self createContentView]]];
         //return [image centerFlip:[self takeSnapshotOfView:[self createContentView]]];
         //return [image cartoonFilter:[self takeSnapshotOfView:[self createContentView]]];
@@ -133,7 +135,9 @@
         //return [image popContrast:[self takeSnapshotOfView:[self createContentView]]];
         
        // return [image dotify:[self takeSnapshotOfView:[self createContentView]]];
-        //return [image clusteredDots:[self takeSnapshotOfView:[self createContentView]]];
+        //popColorSwitch
+        //return [image color_scheme:[self takeSnapshotOfView:[self createContentView]]];
+       // return [image clusteredDots:[self takeSnapshotOfView:[self createContentView]]];
         //return [image fixedNoisyThreshold:[self takeSnapshotOfView:[self createContentView]]];
         //clusteredDots
         //eturn [image gratedDots:[self takeSnapshotOfView:[self createContentView]]];
@@ -260,7 +264,7 @@
     UIView *contentView = [[UIView alloc] initWithFrame:self.view.frame];
     
     UIImageView *contentImage = [[UIImageView alloc] initWithFrame:contentView.frame];
-    contentImage.image = [UIImage imageNamed:@"flowers"];
+    contentImage.image = [UIImage imageNamed:@"demo-bg"];
     [contentView addSubview:contentImage];
     
 //    UIView *metaViewContainer = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width/2 - 65, 335, 130, 130)];

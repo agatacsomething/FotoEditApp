@@ -14,14 +14,17 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 
-//#import "opencv.hpp"
-
 @interface UIImage (PopColor)
 
+// uiimages
 - (UIImage*)popColorMe:(UIImage *)image;
 - (UIImage *)popColorEdges:(UIImage *)image;
 - (UIImage *)popContrast:(UIImage *)image;
 - (UIImage *)popArtSimple:(UIImage *)image;
-//- (cv::Mat)cvMatFromUIImage:(UIImage *)image;
+- (UIImage *)popColorSwitch_img:(UIImage *)image;
+
+
+// opencvs
+//- (cv::Mat)popColorSwitch: (cv::Mat)img_orig : (int)color_scheme;
 
 @end

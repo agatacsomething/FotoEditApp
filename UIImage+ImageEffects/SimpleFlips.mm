@@ -111,10 +111,7 @@
     
     int num_tiles_x = 2;
     int num_tiles_y = 2;
-    int total_tiles = num_tiles_x*num_tiles_y;
-    int border = 5;
-    int total_black = border*2;
-    //int buffer =total_black/(num_tiles_x+1);
+    int border = 9;
     
     
     cv::Mat img_small;
@@ -148,21 +145,54 @@
     cv::flip(img_small, xy_flip, -1);
     xy_flip.copyTo(cv::Mat(img_new, cv::Rect(cw+2*buffer, ch+2*buffer, cw, ch)));
 
-
-//    img_small.copyTo(cv::Mat(img_new, cv::Rect(i*(cw+(buffer))+buffer, j*(ch+(buffer))+buffer, cw, ch)));
-
-    //img_small.copyTo(cv::Mat(cv::flip(img_new, img_new, 1), cv::Rect(buffer, ch+2*buffer, cw, ch));
-
-
-    
-//    for(int i =0 ; i<num_tiles_x; i++){
-//        for(int j =0 ; j<num_tiles_y; j++){
-//        }
-//    }
     
     UIImage* outImage = [mc UIImageFromCVMat: img_new];
     
     return outImage;
+    
+}
+
+- (cv::Mat)tilingFilter_ocv:(cv::Mat)img_orig{
+    
+    /// THIS IS NOT FINISHED !!! ///////
+    
+    NSLog(@"trying out tilingFilter_ocv");
+
+    
+    int w = img_orig.cols; //CGImageGetWidth(imageRef);
+    int h = img_orig.rows; //CGImageGetHeight(imageRef);
+    
+    int num_tiles_x = 2;
+    int num_tiles_y = 3;
+    int total_tiles = num_tiles_x*num_tiles_y;
+    int border = 5;
+    int total_black = border*2;
+    //int buffer =total_black/(num_tiles_x+1);
+    
+    
+    cv::Mat img_small;
+    cv::Size size_small;
+    size_small.width = w/num_tiles_x-border;
+    size_small.height = h/num_tiles_y-border;
+    
+    int buffer =(w-size_small.width*num_tiles_x)/(num_tiles_x+1);
+    
+    cv::resize(img_orig, img_small, size_small, 0, 0, cv::INTER_LINEAR);
+    
+    cv::Mat img_new(img_orig.rows,img_orig.cols,CV_8UC4);
+    
+    std::cout << img_new.type() << img_small.type() << std::endl;
+    
+    int cw =size_small.width;
+    int ch =size_small.height;
+    
+    for(int i =0 ; i<num_tiles_x; i++){
+        for(int j =0 ; j<num_tiles_y; j++){
+            img_small.copyTo(cv::Mat(img_new, cv::Rect(i*(cw+(buffer))+buffer, j*(ch+(buffer))+buffer, cw, ch)));
+        }
+    }
+    
+    return img_new;
     
 }
 

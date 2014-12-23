@@ -11,3 +11,14 @@
 
 
 #endif
+
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+
+//#import "opencv.hpp"
+
+@interface UIImage (DitherFilters)
+
+- (UIImage*)tilingFilterWcolorswap:(UIImage *)image;
+
+@end

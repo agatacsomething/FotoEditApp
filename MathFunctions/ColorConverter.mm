@@ -9,10 +9,52 @@
 
 #import <Foundation/Foundation.h>
 #import "ColorConverter.h"
+#import "MatConverter.h"
 
 @class ColorConverter;
 
 @implementation NSObject (ColorConverter)
+
+- (UIImage *)convertToSepia:(UIImage *)image
+{
+    
+    NSLog(@"trying out convertToSepia ");
+    NSUInteger w = image.size.width; //CGImageGetWidth(imageRef);
+    NSUInteger h = image.size.height; //CGImageGetHeight(imageRef);
+    
+    MatConverter* mc = [[MatConverter alloc] init];
+    
+    cv::Mat img_cvmat = [mc cvMatFromUIImage:image];
+    cv::Mat new_image = cv::Mat::zeros( h,w, CV_8UC4 );
+    
+    for( int y = 0; y < new_image.rows; y++ ){
+        for( int x = 0; x < new_image.cols; x++ ){
+            //for( int c = 0; c < 3; c++ ){
+            int grey_val = (img_cvmat.at<cv::Vec4b>(y,x)[0] + img_cvmat.at<cv::Vec4b>(y,x)[1] + img_cvmat.at<cv::Vec4b>(y,x)[2])/3;
+            
+            double iR =img_cvmat.at<cv::Vec4b>(y, x)[0];
+            double iG =img_cvmat.at<cv::Vec4b>(y, x)[1];
+            double iB =img_cvmat.at<cv::Vec4b>(y, x)[2];
+            
+            int outputRed =  MIN(iR * .393 + iG *.769 + iB* .189,255);
+            int outputGreen= MIN(iR * .349 + iG *.686 + iB* .168,255);
+            int outputBlue = MIN(iR * .272 + iG *.534 + iB* .131,255);
+            
+            new_image.at<cv::Vec4b>(y,x)[0] = outputRed;
+            new_image.at<cv::Vec4b>(y,x)[1] = outputGreen;
+            new_image.at<cv::Vec4b>(y,x)[2] = outputBlue;
+            new_image.at<cv::Vec4b>(y,x)[3] = 255 ;
+        }
+    }
+    std::cout << new_image.at<cv::Vec4b>(0,0)[0] << " : " << new_image.at<cv::Vec4b>(0,0)[3] << std::endl;
+    
+    UIImage *rawImage = [mc UIImageFromCVMat:new_image];
+    
+    
+    return rawImage;
+    
+}
+
 
 - (double*)rgb2lab:(double *)rgbvals{
     
